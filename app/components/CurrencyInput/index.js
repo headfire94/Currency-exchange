@@ -20,6 +20,7 @@ class CurrencyInput extends Component {
                 <input
                     className={s.input__control}
                     type="number"
+                    placeholder="Enter value"
                     step="0.5"
                     value={this.props.value}
                     onChange={e => this.handleChange(e)}

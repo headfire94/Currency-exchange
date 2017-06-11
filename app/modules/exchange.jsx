@@ -143,9 +143,7 @@ function* calculateToValue() {
     try {
         const {fromValue, exchangeRate: {exchangeFrom}} = yield select(state => state);
         const calculatedValue = convertValue(fromValue, exchangeFrom);
-        if (!calculatedValue) {
-            return
-        }
+
         yield put(changeToValueManual(calculatedValue));
     } catch (e) {
         console.error(e);
@@ -157,9 +155,6 @@ export function* calculateFromValue() {
         const {toValue, exchangeRate: {exchangeTo}} = yield select(state => state);
         const calculatedValue = convertValue(toValue, exchangeTo);
 
-        if (!calculatedValue) {
-            return
-        }
         yield put(changeFromValueManual(calculatedValue));
     } catch (e) {
         console.error(e);

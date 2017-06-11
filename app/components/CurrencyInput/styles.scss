@@ -6,11 +6,16 @@
         font-size: 1.3em;
         border: 0;
         width: 100%;
+        color: #FFFFFF;
 
         &:focus {
             outline: none;
         }
 
+        &::placeholder {
+            color: #FFFFFF;
+            opacity:0.5;
+        }
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
             -webkit-appearance: none;

@@ -1,7 +1,8 @@
 export default function convertValue(from, factor) {
     const preparedValue = Number(from);
+
     if (!preparedValue) {
-        return;
+        return '';
     }
 
     return (preparedValue * factor).toString();
