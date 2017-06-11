@@ -13,6 +13,8 @@ import {
 import CurrencySelect from 'components/CurrencySelect/index';
 import CurrencyInput from 'components/CurrencyInput/index';
 
+import s from './styles.scss';
+
 class ExchangePage extends Component {
     static propTypes = {
         fromCurrencySelect: PropTypes.string.isRequired,
@@ -27,38 +29,44 @@ class ExchangePage extends Component {
 
     render() {
         return (
-            <div>
-                <div>
-                    <div>
+            <div className={s.exchangePage}>
+                    <div className={s.exchangePage__from}>
                         From:
                         <CurrencySelect
                             value={this.props.fromCurrencySelect}
                             onChange={this.props.changeFromCurrencySelect} />
                         <CurrencyInput value={this.props.fromValue}
                                        onChange={value => this.props.changeFromValue(value)}/>
+                        <div>
+                            1 {this.props.fromCurrencySelect} = {this.props.exchangeFrom} {this.props.toCurrencySelect}
+                        </div>
                     </div>
-                    <div>
+                    <div className={s.exchangePage__to}>
                         To:
                         <CurrencySelect
                             value={this.props.toCurrencySelect}
                             onChange={this.props.changeToCurrencySelect} />
                         <CurrencyInput value={this.props.toValue}
                                        onChange={value => this.props.changeToValue(value)}/>
+                        <div>
+                              1 {this.props.toCurrencySelect} = {this.props.exchangeTo} {this.props.fromCurrencySelect}
+                        </div>
                     </div>
-                </div>
             </div>
         );
     }
 }
 
 const mapStateToProps = state => {
-    const {fromValue, toValue, fromCurrencySelect, toCurrencySelect} = state;
+    const {fromValue, toValue, fromCurrencySelect, toCurrencySelect, exchangeRate: {exchangeTo, exchangeFrom}} = state;
 
     return {
         fromValue,
         fromCurrencySelect,
         toCurrencySelect,
-        toValue
+        toValue,
+        exchangeFrom,
+        exchangeTo
     }
 };
 export default connect(mapStateToProps, {

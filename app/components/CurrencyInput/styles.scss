@@ -1,0 +1,33 @@
+.input {
+    position: relative;
+    &__control {
+        background: transparent;
+        height: 40px;
+        font-size: 1.3em;
+        border: 0;
+        width: 100%;
+
+        &:focus {
+            outline: none;
+        }
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    &:after {
+        position: absolute;
+        left:0;
+        right:0;
+        bottom: 3px;
+
+        height: 1px;
+        background: #FFF;
+        opacity: 0.8;
+
+        content: '';
+    }
+}

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+import s from './styles.scss';
 
 class CurrencyInput extends Component {
     static propTypes = {
@@ -15,12 +16,15 @@ class CurrencyInput extends Component {
 
     render() {
         return (
-            <input
-                type="number"
-                step="0.5"
-                value={this.props.value}
-                onChange={e => this.handleChange(e)}
-            />
+            <div className={s.input}>
+                <input
+                    className={s.input__control}
+                    type="number"
+                    step="0.5"
+                    value={this.props.value}
+                    onChange={e => this.handleChange(e)}
+                />
+            </div>
         );
     }
 }

@@ -18,6 +18,7 @@ import {
 } from 'redux-actions';
 import {combineReducers} from 'redux';
 
+import convertValue from 'utils/convertValue';
 import api from 'services/api';
 
 // ACTIONS
@@ -32,6 +33,7 @@ const CHANGE_TO_VALUE = 'currency/exchange/CHANGE_TO_VALUE';
 const CHANGE_FROM_VALUE = 'currency/exchange/CHANGE_FROM_VALUE';
 const CHANGE_TO_VALUE_MANUAL = 'currency/exchange/CHANGE_TO_VALUE_MANUAL';
 const CHANGE_FROM_VALUE_MANUAL = 'currency/exchange/CHANGE_FROM_VALUE_MANUAL';
+const UPDATE_EXCHANGE_RATE = 'currency/exchange/UPDATE_EXCHANGE_RATE';
 
 // ACTION CREATORS
 export const fetchCurrenciesRequest = createAction(FETCH_CURRENCIES_REQUEST);
@@ -45,6 +47,7 @@ export const changeFromValue = createAction(CHANGE_FROM_VALUE);
 export const changeToValue = createAction(CHANGE_TO_VALUE);
 export const changeFromValueManual = createAction(CHANGE_FROM_VALUE_MANUAL);
 export const changeToValueManual = createAction(CHANGE_TO_VALUE_MANUAL);
+export const updateExchangeRate = createAction(UPDATE_EXCHANGE_RATE);
 
 // REDUCERS
 const currencies = handleActions({
@@ -63,6 +66,13 @@ const toCurrencySelect = handleActions({
     [changeToCurrencySelect]: (state, action) => action.payload
 }, 'EUR');
 
+const exchangeRate = handleActions({
+    [updateExchangeRate]: (state, action) => action.payload
+}, {
+    from: null,
+    to: null
+});
+
 const fromValue = handleActions({
     [combineActions(changeFromValue, changeFromValueManual)]: (state, action) => action.payload
 }, '');
@@ -76,7 +86,8 @@ const exchange = combineReducers({
     fromValue,
     fromCurrencySelect,
     toCurrencySelect,
-    toValue
+    toValue,
+    exchangeRate
 });
 
 export default exchange;
@@ -111,7 +122,7 @@ function* fetchFXRates() {
 /**
  * cancel fetching FXRates if page isn't visible
  */
-function* manager() {
+function* fetchManager() {
     while (true) {
         const task = yield fork(fetchFXRates);
         yield take(OFFLINE);
@@ -128,35 +139,64 @@ function* watcher() {
     }
 }
 
-function* calculateToValue(action) {
+function* calculateToValue() {
     try {
-        const {toCurrencySelect, fromCurrencySelect, currencies, fromValue} = yield select(state => state);
-        const preparedValue = Number(fromValue);
-        const factor = currencies[toCurrencySelect] / currencies[fromCurrencySelect];
-        const calculatedValue = (preparedValue * factor).toString();
+        const {fromValue, exchangeRate: {exchangeFrom}} = yield select(state => state);
+        const calculatedValue = convertValue(fromValue, exchangeFrom);
+        if (!calculatedValue) {
+            return
+        }
         yield put(changeToValueManual(calculatedValue));
     } catch (e) {
         console.error(e);
     }
 }
 
-function* calculateFromValue(action) {
+export function* calculateFromValue() {
     try {
-        const {toCurrencySelect, fromCurrencySelect, currencies, toValue} = yield select(state => state);
-        const preparedValue = Number(toValue);
-        const factor = currencies[fromCurrencySelect] / currencies[toCurrencySelect];
-        const calculatedValue = (preparedValue * factor).toString();
+        const {toValue, exchangeRate: {exchangeTo}} = yield select(state => state);
+        const calculatedValue = convertValue(toValue, exchangeTo);
+
+        if (!calculatedValue) {
+            return
+        }
         yield put(changeFromValueManual(calculatedValue));
     } catch (e) {
         console.error(e);
     }
 }
 
+function* updateExchangeRates() {
+    try {
+        const {toCurrencySelect, fromCurrencySelect, currencies} = yield select(state => state);
+        const exchangeFrom = convertValue(1, currencies[toCurrencySelect] / currencies[fromCurrencySelect]);
+        const exchangeTo = convertValue(1, currencies[fromCurrencySelect] / currencies[toCurrencySelect]);
+
+        yield put(updateExchangeRate({
+            exchangeFrom,
+            exchangeTo
+        }));
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+function* handleFromSelectChange() {
+    yield call(updateExchangeRates);
+    yield call(calculateToValue);
+}
+
+function* handleToSelectChange() {
+    yield call(updateExchangeRates);
+    yield call(calculateFromValue);
+}
+
 export function* exchangeSaga() {
     yield fork(watcher);
-    yield fork(manager);
+    yield fork(fetchManager);
     yield takeEvery(CHANGE_FROM_VALUE, calculateToValue);
     yield takeEvery(CHANGE_TO_VALUE, calculateFromValue);
-    yield takeEvery(CHANGE_FROM_SELECT, calculateToValue);
-    yield takeEvery(CHANGE_TO_SELECT, calculateToValue);
+    yield takeEvery(CHANGE_FROM_SELECT, handleFromSelectChange);
+    yield takeEvery(CHANGE_TO_SELECT, handleToSelectChange);
+    yield takeEvery(FETCH_CURRENCIES_SUCCESS, updateExchangeRates);
 }

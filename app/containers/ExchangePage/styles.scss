@@ -1,0 +1,48 @@
+.exchangePage {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    &__from, &__to {
+        margin: 0 2.5%;
+        padding: 10px;
+        flex: 1 0 45%;
+        max-width: 45%;
+        box-sizing: border-box;
+        color: #FFF;
+        border-radius: 5px;
+        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+
+        @media (max-width: 767px) {
+            flex-basis: 100%;
+            margin: 10px 0;
+            max-width: 100%;
+        }
+    }
+
+    &__from {
+        background: #1c6bf6;
+        position: relative;
+        &:after {
+            position: absolute;
+            content: '';
+            right: -36px;
+            top: 50%;
+            margin-top: -12px;
+            border: 10px solid transparent;
+            border-left: 10px solid #1c6bf6;
+
+            @media (max-width: 767px) {
+                right: 50%;
+                top: 100%;
+                margin-top: 6px;
+                border-left: 10px solid transparent;
+                border-top: 10px solid #1c6bf6;
+            }
+        }
+    }
+
+    &__to {
+        background: #2158c5;
+    }
+}
