@@ -10,7 +10,7 @@
   "devDependencies": {
     "babel-core": "^6.24.0",
     "babel-loader": "7.0.0",
-    "babel-plugin-transform-class-properties": "^6.23.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.5.1",
@@ -35,7 +35,7 @@
     "react-dom": "^15.5.4",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-redux": "^5.0.5",
-    "react-select": "^1.0.0-rc.4",
+    "react-select": "^1.0.0-rc.5",
     "redux": "^3.6.0",
     "redux-actions": "^2.0.3",
     "redux-saga": "^0.15.3"
