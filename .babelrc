@@ -1,0 +1,22 @@
+{
+  "presets": [
+    "react",
+    "es2015",
+    "stage-2",
+    ["env", {
+      "targets": {
+        "chrome": 52,
+        "browsers": ["last 2 versions", "safari 7"]
+      },
+      "modules": false,
+      "loose": true
+    }]
+  ],
+  "env": {
+    "development": {
+      "plugins": [
+        "react-hot-loader/babel"
+      ]
+    }
+  }
+}

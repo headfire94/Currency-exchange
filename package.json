@@ -1,0 +1,43 @@
+{
+  "name": "Currency-exchange",
+  "version": "1.0.0",
+  "description": "Currency-exchange",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "prod": "cross-env NODE_ENV=production webpack-dev-server --env.prod=true",
+    "build": "rimraf build && cross-env NODE_ENV=production webpack --env.prod=true"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.0",
+    "babel-loader": "7.0.0",
+    "babel-plugin-transform-class-properties": "^6.23.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.5.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "cross-env": "4.0.0",
+    "css-loader": "^0.28.4",
+    "extract-text-webpack-plugin": "2.1.0",
+    "file-loader": "0.11.1",
+    "html-webpack-plugin": "2.28.0",
+    "node-sass": "4.5.3",
+    "rimraf": "2.6.1",
+    "sass-loader": "6.0.2",
+    "style-loader": "0.18.1",
+    "webpack": "^2.6.0",
+    "webpack-dev-server": "2.4.5"
+  },
+  "dependencies": {
+    "prop-types": "^15.5.10",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-hot-loader": "^3.0.0-beta.6",
+    "react-redux": "^5.0.5",
+    "react-select": "^1.0.0-rc.4",
+    "redux": "^3.6.0",
+    "redux-actions": "^2.0.3",
+    "redux-saga": "^0.15.3"
+  }
+}
