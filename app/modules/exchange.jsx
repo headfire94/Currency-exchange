@@ -109,11 +109,11 @@ function createVisibilityChannel() {
 function* fetchFXRates() {
     while (true) {
         try {
-            yield put(fetchCurrenciesRequest());
+            yield put(fetchCurrenciesRequest()); // @todo set preloader
             const rates = yield call(api.getFXRates);
             yield put(fetchCurrenciesSuccess(rates));
         } catch (e) {
-            yield put(fetchCurrenciesFailure(e));
+            yield put(fetchCurrenciesFailure(e)); // @todo show notification
         }
         yield call(delay, 10000);
     }
