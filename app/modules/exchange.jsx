@@ -26,9 +26,12 @@ export const offline = createAction(OFFLINE);
 
 // REDUCERS
 const currencies = handleActions({
-  [fetchCurrenciesRequest]: () => [],
-  [fetchCurrenciesSuccess]: (state, action) => action.payload,
-}, []);
+  [fetchCurrenciesSuccess]: (state, action) => ({
+      USD: action.payload.USD,
+      EUR: action.payload.EUR,
+      GBP: action.payload.GBP
+  }),
+}, {});
 
 const exchange = combineReducers({
     currencies
@@ -37,6 +40,7 @@ const exchange = combineReducers({
 export default exchange;
 
 // SIDE_EFFECTS
+
 function createVisibilityChannel() {
     return eventChannel(emit => {
         const change = () => {
@@ -49,6 +53,31 @@ function createVisibilityChannel() {
     });
 }
 
+function* fetchFXRates() {
+    while (true) {
+        try{
+            yield put(fetchCurrenciesRequest());
+            const rates = yield call(api.getFXRates);
+            yield put(fetchCurrenciesSuccess(rates));
+        } catch(e){
+            yield put(fetchCurrenciesFailure(e));
+        }
+        yield call(delay, 10000);
+    }
+}
+
+/**
+ * cancel fetching FXRates if page isn't visible
+ */
+function* manager() {
+    while (true) {
+        const task = yield fork(fetchFXRates);
+        yield take(OFFLINE);
+        task.cancel();
+        yield take(ONLINE);
+    }
+}
+
 function* watcher() {
     const channel = createVisibilityChannel();
     while (true) {
@@ -56,6 +85,8 @@ function* watcher() {
         yield put(action);
     }
 }
+
 export function* exchangeSaga() {
     yield fork(watcher);
+    yield fork(manager);
 }
